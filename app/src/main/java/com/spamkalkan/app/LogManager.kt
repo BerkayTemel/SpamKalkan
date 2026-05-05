@@ -13,13 +13,6 @@ object LogManager {
     private const val KEY_LOGS = "call_logs"
     private const val MAX_LOGS = 200
 
-    data class LogEntry(
-        val number: String,
-        val type: String,
-        val time: String,
-        val isCall: Boolean
-    )
-
     private fun prefs(context: Context): SharedPreferences =
         context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
@@ -50,7 +43,6 @@ object LogManager {
         }
         logs.add(0, entry)
         if (logs.size > MAX_LOGS) logs.removeAt(logs.size - 1)
-
         val arr = JSONArray()
         logs.forEach { arr.put(it) }
         prefs(context).edit().putString(KEY_LOGS, arr.toString()).apply()
@@ -64,15 +56,11 @@ object LogManager {
         } catch (e: Exception) { emptyList() }
     }
 
-    fun clearLogs(context: Context) {
-        prefs(context).edit().putString(KEY_LOGS, "[]").apply()
-    }
-
     fun getStats(context: Context): Map<String, Int> {
         val logs = getLogs(context)
         return mapOf(
             "total" to logs.size,
-            "spam" to logs.count { it.getString("type") == "spam" || it.getString("type") == "prefix" },
+            "spam" to logs.count { it.getString("type") in listOf("spam", "prefix") },
             "bank" to logs.count { it.getString("type") == "bank" },
             "sms" to logs.count { it.getString("type") == "sms_spam" },
             "intl" to logs.count { it.getString("type") == "international" }

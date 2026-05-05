@@ -39,7 +39,6 @@ class CallScreeningServiceImpl : CallScreeningService() {
                     .build()
             }
         }
-
         respondToCall(callDetails, response)
     }
 }

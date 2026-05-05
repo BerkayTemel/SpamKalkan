@@ -8,5 +8,10 @@
         <item name="android:windowBackground">@color/bg</item>
         <item name="android:statusBarColor">@color/bg</item>
         <item name="android:navigationBarColor">@color/bg</item>
+        <item name="switchStyle">@style/SpamSwitch</item>
+    </style>
+
+    <style name="SpamSwitch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="colorControlActivated">@color/accent</item>
     </style>
 </resources>
