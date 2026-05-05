@@ -1,19 +1,28 @@
 {
   "project_info": {
-    "project_number": "000000000000",
+    "project_number": "891918810723",
     "project_id": "spamkalkan",
-    "storage_bucket": "spamkalkan.appspot.com"
+    "storage_bucket": "spamkalkan.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+        "mobilesdk_app_id": "1:891918810723:android:e2e26c8656d6435844c256",
         "android_client_info": {
           "package_name": "com.spamkalkan.app"
         }
       },
-      "api_key": [{ "current_key": "AIzaSyCor27zYiK6PyxPgh54y_AbaleZAVBJkXE" }],
-      "services": {}
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCor27zYiK6PyxPgh54y_AbaleZAVBJkXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
     }
   ],
   "configuration_version": "1"
