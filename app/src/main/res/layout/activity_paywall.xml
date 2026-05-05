@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🛡"
+            android:textSize="72sp"
+            android:layout_marginTop="24dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SPAM KALKAN"
+            android:textColor="@color/text"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Spam aramaları ve mesajları otomatik engelleyin"
+            android:textColor="@color/muted"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="📵  Spam aramaları otomatik sessize alır"
+                android:textColor="@color/text" android:textSize="14sp" android:paddingBottom="8dp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="🏦  Banka aramalarını sessize alır"
+                android:textColor="@color/text" android:textSize="14sp" android:paddingBottom="8dp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="✉️  Spam SMS'leri otomatik filtreler"
+                android:textColor="@color/text" android:textSize="14sp" android:paddingBottom="8dp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="🔄  Liste sürekli otomatik güncellenir"
+                android:textColor="@color/text" android:textSize="14sp" android:paddingBottom="8dp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="🔒  Gizliliğiniz korunur"
+                android:textColor="@color/text" android:textSize="14sp"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PLAN SEÇİN"
+            android:textColor="@color/muted"
+            android:textSize="11sp"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:id="@+id/planContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+        <Button
+            android:id="@+id/btnSubscribe"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="HEMEN BAŞLA"
+            android:backgroundTint="@color/accent"
+            android:textColor="@color/bg"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Google Play üzerinden güvenli ödeme.\nDilediğiniz zaman iptal edebilirsiniz."
+            android:textColor="@color/dim"
+            android:textSize="11sp"
+            android:gravity="center"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/tvTestMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test modunda devam et"
+            android:textColor="@color/muted"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp"/>
+
+    </LinearLayout>
+</ScrollView>

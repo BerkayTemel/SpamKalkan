@@ -1,0 +1,20 @@
+{
+  "project_info": {
+    "project_number": "000000000000",
+    "project_id": "spamkalkan",
+    "storage_bucket": "spamkalkan.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+        "android_client_info": {
+          "package_name": "com.spamkalkan.app"
+        }
+      },
+      "api_key": [{ "current_key": "AIzaSyCor27zYiK6PyxPgh54y_AbaleZAVBJkXE" }],
+      "services": {}
+    }
+  ],
+  "configuration_version": "1"
+}

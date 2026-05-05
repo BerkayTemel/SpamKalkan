@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/card"
+        app:tabTextColor="@color/muted"
+        app:tabSelectedTextColor="@color/accent"
+        app:tabIndicatorColor="@color/accent"
+        app:tabMode="fixed"
+        app:tabGravity="fill">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PANEL" />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AYARLAR" />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GEÇMİŞ" />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HESAP" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- PANEL -->
+            <LinearLayout
+                android:id="@+id/panelView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/card_bg"
+                    android:padding="16dp"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:id="@+id/tvProtectionStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🛡 KORUMA AKTİF"
+                        android:textColor="@color/success"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:paddingBottom="12dp"/>
+
+                    <TextView
+                        android:id="@+id/tvRoleStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Kontrol ediliyor..."
+                        android:textColor="@color/muted"
+                        android:textSize="13sp"
+                        android:gravity="center"/>
+
+                    <Button
+                        android:id="@+id/btnRequestRole"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Arama Filtrelemeyi Etkinleştir"
+                        android:backgroundTint="@color/accent"
+                        android:textColor="@color/bg"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:background="@drawable/card_bg"
+                        android:padding="16dp"
+                        android:layout_marginEnd="6dp"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/tvBlockedTotal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/accent"
+                            android:textSize="28sp"
+                            android:textStyle="bold"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Toplam"
+                            android:textColor="@color/muted"
+                            android:textSize="11sp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:background="@drawable/card_bg"
+                        android:padding="16dp"
+                        android:layout_marginStart="6dp"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/tvBlockedSpam"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/danger"
+                            android:textSize="28sp"
+                            android:textStyle="bold"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Spam"
+                            android:textColor="@color/muted"
+                            android:textSize="11sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:background="@drawable/card_bg"
+                        android:padding="16dp"
+                        android:layout_marginEnd="6dp"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/tvBlockedBank"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/bank"
+                            android:textSize="28sp"
+                            android:textStyle="bold"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Banka"
+                            android:textColor="@color/muted"
+                            android:textSize="11sp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:background="@drawable/card_bg"
+                        android:padding="16dp"
+                        android:layout_marginStart="6dp"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/tvBlockedSms"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/warning"
+                            android:textSize="28sp"
+                            android:textStyle="bold"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SMS"
+                            android:textColor="@color/muted"
+                            android:textSize="11sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnRefreshList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🔄 Listeyi Güncelle"
+                    android:backgroundTint="@color/card"
+                    android:textColor="@color/accent"/>
+
+            </LinearLayout>
+
+            <!-- AYARLAR -->
+            <LinearLayout
+                android:id="@+id/settingsView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/card_bg"
+                    android:padding="16dp"
+                    android:layout_marginBottom="12dp">
+
+                    <include layout="@layout/switch_row"
+                        android:id="@+id/rowProtection"/>
+
+                    <Switch android:id="@+id/switchProtection"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Koruma Aktif"
+                        android:textColor="@color/text"
+                        android:padding="8dp"/>
+
+                    <Switch android:id="@+id/switchBlockUnknown"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tanımadıkları Sessize Al"
+                        android:textColor="@color/text"
+                        android:padding="8dp"/>
+
+                    <Switch android:id="@+id/switchSilenceBanks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Bankaları Sessize Al"
+                        android:textColor="@color/text"
+                        android:padding="8dp"/>
+
+                    <Switch android:id="@+id/switchBlockPrefixes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Ön Ek Filtresi"
+                        android:textColor="@color/text"
+                        android:padding="8dp"/>
+
+                    <Switch android:id="@+id/switchBlockKeywords"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="SMS Kelime Filtresi"
+                        android:textColor="@color/text"
+                        android:padding="8dp"/>
+
+                    <Switch android:id="@+id/switchBlockInternational"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Yurtdışı Aramaları Sessize Al"
+                        android:textColor="@color/text"
+                        android:padding="8dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ENGELLENECEK ALAN KODLARI"
+                        android:textColor="@color/muted"
+                        android:textSize="11sp"
+                        android:letterSpacing="0.1"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="8dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/prefixContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- GEÇMİŞ -->
+            <LinearLayout
+                android:id="@+id/historyView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:background="@drawable/card_bg"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:id="@+id/historyContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"/>
+
+            </LinearLayout>
+
+            <!-- HESAP -->
+            <LinearLayout
+                android:id="@+id/accountView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/card_bg"
+                    android:padding="24dp"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✅"
+                        android:textSize="40sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Abonelik Aktif"
+                        android:textColor="@color/success"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Korumanız devam ediyor"
+                        android:textColor="@color/muted"
+                        android:textSize="13sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/card_bg"
+                    android:padding="16dp">
+
+                    <Button
+                        android:id="@+id/btnCancelSubscription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Aboneliği İptal Et"
+                        android:backgroundTint="#1AFF4466"
+                        android:textColor="@color/danger"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
