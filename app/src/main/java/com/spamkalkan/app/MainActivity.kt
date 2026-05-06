@@ -31,16 +31,70 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         if (!SpamManager.isSubscribed(this)) {
             setContentView(R.layout.activity_paywall)
             setupPaywall()
             return
         }
+
         setContentView(R.layout.activity_main)
-        requestPermissionsIfNeeded()
+        requestAllPermissions()
         setupTabs()
         showTab("panel")
         updateFirebaseInBackground()
+    }
+
+    private fun requestAllPermissions() {
+        val missing = PERMISSIONS.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+        if (missing.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, missing.toTypedArray(), PERMISSION_REQUEST)
+        } else {
+            requestCallScreeningRoleIfNeeded()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST) {
+            requestCallScreeningRoleIfNeeded()
+        }
+    }
+
+    private fun requestCallScreeningRoleIfNeeded() {
+        val roleManager = getSystemService(RoleManager::class.java)
+        if (!roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)) {
+            AlertDialog.Builder(this)
+                .setTitle("Arama Filtreleme İzni")
+                .setMessage("Spam aramaları engelleyebilmek için Spam Kalkan'ın arama filtreleme uygulaması olarak ayarlanması gerekiyor.")
+                .setPositiveButton("İzin Ver") { _, _ ->
+                    val intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING)
+                    startActivityForResult(intent, ROLE_REQUEST)
+                }
+                .setNegativeButton("Daha Sonra", null)
+                .show()
+        } else {
+            requestSmsDefaultIfNeeded()
+        }
+    }
+
+    private fun requestSmsDefaultIfNeeded() {
+        val isDefault = Telephony.Sms.getDefaultSmsPackage(this) == packageName
+        if (!isDefault) {
+            AlertDialog.Builder(this)
+                .setTitle("SMS Filtreleme İzni")
+                .setMessage("Spam SMS'leri filtrelemek için Spam Kalkan'ın varsayılan SMS uygulaması olarak ayarlanması gerekiyor. Endişelenmeyin, SMS'leriniz silinmez.")
+                .setPositiveButton("İzin Ver") { _, _ ->
+                    val intent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT).apply {
+                        putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
+                    }
+                    startActivityForResult(intent, SMS_DEFAULT_REQUEST)
+                }
+                .setNegativeButton("Daha Sonra", null)
+                .show()
+        }
     }
 
     private fun setupPaywall() {
@@ -75,13 +129,12 @@ class MainActivity : AppCompatActivity() {
             }
 
             plan.badge?.let {
-                val badgeTv = TextView(this).apply {
+                card.addView(TextView(this).apply {
                     text = it
                     setTextColor(if (plan.id == "annual") getColor(R.color.accent) else getColor(R.color.warning))
                     textSize = 11f
                     setPadding(0, 0, 0, 8)
-                }
-                card.addView(badgeTv)
+                })
             }
 
             val row = LinearLayout(this).apply {
@@ -92,28 +145,24 @@ class MainActivity : AppCompatActivity() {
                 orientation = LinearLayout.VERTICAL
                 layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
             }
-            val titleTv = TextView(this).apply {
+            infoLayout.addView(TextView(this).apply {
                 text = plan.title
                 setTextColor(getColor(R.color.text))
                 textSize = 16f
                 setTypeface(typeface, android.graphics.Typeface.BOLD)
-            }
-            val subTv = TextView(this).apply {
+            })
+            infoLayout.addView(TextView(this).apply {
                 text = "${plan.perMonth}${plan.saving?.let { s -> " · $s" } ?: ""}"
                 setTextColor(getColor(R.color.muted))
                 textSize = 12f
-            }
-            val priceTv = TextView(this).apply {
+            })
+            row.addView(infoLayout)
+            row.addView(TextView(this).apply {
                 text = plan.price
                 setTextColor(if (plan.id == "annual") getColor(R.color.accent) else getColor(R.color.text))
                 textSize = 24f
                 setTypeface(typeface, android.graphics.Typeface.BOLD)
-            }
-
-            infoLayout.addView(titleTv)
-            infoLayout.addView(subTv)
-            row.addView(infoLayout)
-            row.addView(priceTv)
+            })
             card.addView(row)
             planContainer.addView(card)
         }
@@ -145,8 +194,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showTab(tab: String) {
-        mapOf("panel" to R.id.panelView, "settings" to R.id.settingsView,
-            "history" to R.id.historyView, "account" to R.id.accountView).forEach { (name, id) ->
+        mapOf(
+            "panel" to R.id.panelView,
+            "settings" to R.id.settingsView,
+            "history" to R.id.historyView,
+            "account" to R.id.accountView
+        ).forEach { (name, id) ->
             findViewById<View>(id)?.visibility = if (name == tab) View.VISIBLE else View.GONE
         }
         when (tab) {
@@ -179,7 +232,7 @@ class MainActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.btnRequestRole)?.apply {
             visibility = if (hasRole) View.GONE else View.VISIBLE
-            setOnClickListener { requestCallScreeningRole() }
+            setOnClickListener { requestCallScreeningRoleIfNeeded() }
         }
 
         findViewById<TextView>(R.id.tvSmsStatus)?.apply {
@@ -188,7 +241,7 @@ class MainActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.btnRequestSmsDefault)?.apply {
             visibility = if (isDefaultSms) View.GONE else View.VISIBLE
-            setOnClickListener { requestDefaultSmsApp() }
+            setOnClickListener { requestSmsDefaultIfNeeded() }
         }
 
         findViewById<Button>(R.id.btnRefreshList)?.setOnClickListener {
@@ -227,7 +280,7 @@ class MainActivity : AppCompatActivity() {
         container.removeAllViews()
         val selected = SpamManager.getSelectedPrefixes(this).toMutableList()
         prefixOptions.forEach { (prefix, label) ->
-            val cb = CheckBox(this).apply {
+            container.addView(CheckBox(this).apply {
                 text = label
                 isChecked = selected.contains(prefix)
                 setTextColor(getColor(R.color.text))
@@ -238,8 +291,7 @@ class MainActivity : AppCompatActivity() {
                     else selected.remove(prefix)
                     SpamManager.setSelectedPrefixes(this@MainActivity, selected)
                 }
-            }
-            container.addView(cb)
+            })
         }
     }
 
@@ -323,33 +375,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun requestCallScreeningRole() {
-        val roleManager = getSystemService(RoleManager::class.java)
-        if (!roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)) {
-            startActivityForResult(roleManager.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING), ROLE_REQUEST)
-        }
-    }
-
-    private fun requestDefaultSmsApp() {
-        val intent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT).apply {
-            putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
-        }
-        startActivityForResult(intent, SMS_DEFAULT_REQUEST)
-    }
-
-    private fun requestPermissionsIfNeeded() {
-        val missing = PERMISSIONS.filter {
-            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
-        }
-        if (missing.isNotEmpty()) ActivityCompat.requestPermissions(this, missing.toTypedArray(), PERMISSION_REQUEST)
-    }
-
     private fun updateFirebaseInBackground() {
-        lifecycleScope.launch { SpamManager.updateFromFirebase(applicationContext) }
+        lifecycleScope.launch {
+            SpamManager.updateFromFirebase(applicationContext)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == ROLE_REQUEST || requestCode == SMS_DEFAULT_REQUEST) setupPanel()
+        when (requestCode) {
+            ROLE_REQUEST -> {
+                setupPanel()
+                requestSmsDefaultIfNeeded()
+            }
+            SMS_DEFAULT_REQUEST -> setupPanel()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (SpamManager.isSubscribed(this)) setupPanel()
     }
 }

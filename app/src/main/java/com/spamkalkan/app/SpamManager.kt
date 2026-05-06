@@ -2,9 +2,10 @@ package com.spamkalkan.app
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.tasks.await
 import org.json.JSONArray
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
 
 object SpamManager {
 
@@ -20,6 +21,8 @@ object SpamManager {
     private const val KEY_BLOCK_INTL = "block_international"
     private const val KEY_SELECTED_PREFIXES = "selected_prefixes"
     private const val KEY_SUBSCRIBED = "is_subscribed"
+
+    private const val FIRESTORE_URL = "https://firestore.googleapis.com/v1/projects/spamkalkan/databases/(default)/documents/config/spam_lists?key=AIzaSyCor27zYiK6PyxPgh54y_AbaleZAVBJkXE"
 
     val BANK_PREFIXES = listOf("0850", "0444", "04442", "04443", "04444", "04445", "04446", "04447", "04448", "04449")
 
@@ -96,17 +99,37 @@ object SpamManager {
 
     suspend fun updateFromFirebase(context: Context) {
         try {
-            val db = FirebaseFirestore.getInstance()
-            val doc = db.collection("config").document("spam_lists").get().await()
-            val numbers = doc.get("numbers") as? List<*> ?: emptyList<Any>()
-            val keywords = doc.get("keywords") as? List<*> ?: emptyList<Any>()
-            val prefixes = doc.get("prefixes") as? List<*> ?: emptyList<Any>()
+            val url = URL(FIRESTORE_URL)
+            val conn = url.openConnection() as HttpURLConnection
+            conn.requestMethod = "GET"
+            conn.connectTimeout = 10000
+            conn.readTimeout = 10000
+
+            val response = conn.inputStream.bufferedReader().readText()
+            val json = JSONObject(response)
+            val fields = json.getJSONObject("fields")
+
+            fun parseArray(fieldName: String): List<String> {
+                return try {
+                    val arr = fields.getJSONObject(fieldName).getJSONObject("arrayValue").getJSONArray("values")
+                    (0 until arr.length()).map { arr.getJSONObject(it).getString("stringValue") }
+                } catch (e: Exception) { emptyList() }
+            }
+
+            val numbers = parseArray("numbers")
+            val keywords = parseArray("keywords")
+            val prefixes = parseArray("prefixes")
+
             prefs(context).edit()
-                .putString(KEY_NUMBERS, listToJson(numbers.map { it.toString() }))
-                .putString(KEY_KEYWORDS, listToJson(keywords.map { it.toString() }))
-                .putString(KEY_PREFIXES, listToJson(prefixes.map { it.toString() }))
+                .putString(KEY_NUMBERS, listToJson(numbers))
+                .putString(KEY_KEYWORDS, listToJson(keywords))
+                .putString(KEY_PREFIXES, listToJson(prefixes))
                 .apply()
-        } catch (e: Exception) { e.printStackTrace() }
+
+            android.util.Log.d("SpamKalkan", "Firebase güncellendi: ${numbers.size} numara, ${keywords.size} kelime")
+        } catch (e: Exception) {
+            android.util.Log.e("SpamKalkan", "Firebase hatası: ${e.message}")
+        }
     }
 }
 
