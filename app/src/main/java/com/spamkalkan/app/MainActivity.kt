@@ -27,7 +27,6 @@ class MainActivity : AppCompatActivity() {
     )
     private val PERMISSION_REQUEST = 100
     private val ROLE_REQUEST = 101
-    private val SMS_DEFAULT_REQUEST = 102
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,32 +66,14 @@ class MainActivity : AppCompatActivity() {
         val roleManager = getSystemService(RoleManager::class.java)
         if (!roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)) {
             AlertDialog.Builder(this)
-                .setTitle("Arama Filtreleme İzni")
-                .setMessage("Spam aramaları engelleyebilmek için Spam Kalkan'ın arama filtreleme uygulaması olarak ayarlanması gerekiyor.")
+                .setTitle("🛡 Arama Filtreleme İzni")
+                .setMessage("Spam aramaları arka planda sessize alabilmek için bu izin gereklidir. Sadece spam aramaları engeller, normal aramaları etkilemez.")
                 .setPositiveButton("İzin Ver") { _, _ ->
                     val intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING)
                     startActivityForResult(intent, ROLE_REQUEST)
                 }
                 .setNegativeButton("Daha Sonra", null)
-                .show()
-        } else {
-            requestSmsDefaultIfNeeded()
-        }
-    }
-
-    private fun requestSmsDefaultIfNeeded() {
-        val isDefault = Telephony.Sms.getDefaultSmsPackage(this) == packageName
-        if (!isDefault) {
-            AlertDialog.Builder(this)
-                .setTitle("SMS Filtreleme İzni")
-                .setMessage("Spam SMS'leri filtrelemek için Spam Kalkan'ın varsayılan SMS uygulaması olarak ayarlanması gerekiyor. Endişelenmeyin, SMS'leriniz silinmez.")
-                .setPositiveButton("İzin Ver") { _, _ ->
-                    val intent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT).apply {
-                        putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
-                    }
-                    startActivityForResult(intent, SMS_DEFAULT_REQUEST)
-                }
-                .setNegativeButton("Daha Sonra", null)
+                .setCancelable(false)
                 .show()
         }
     }
@@ -215,7 +196,6 @@ class MainActivity : AppCompatActivity() {
         val isOn = SpamManager.isProtectionOn(this)
         val roleManager = getSystemService(RoleManager::class.java)
         val hasRole = roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)
-        val isDefaultSms = Telephony.Sms.getDefaultSmsPackage(this) == packageName
 
         findViewById<TextView>(R.id.tvProtectionStatus)?.apply {
             text = if (isOn) "🛡 KORUMA AKTİF" else "⚠️ KORUMA KAPALI"
@@ -235,14 +215,9 @@ class MainActivity : AppCompatActivity() {
             setOnClickListener { requestCallScreeningRoleIfNeeded() }
         }
 
-        findViewById<TextView>(R.id.tvSmsStatus)?.apply {
-            text = if (isDefaultSms) "✅ SMS filtreleme aktif" else "⚠️ SMS izni gerekli"
-            setTextColor(getColor(if (isDefaultSms) R.color.success else R.color.warning))
-        }
-        findViewById<Button>(R.id.btnRequestSmsDefault)?.apply {
-            visibility = if (isDefaultSms) View.GONE else View.VISIBLE
-            setOnClickListener { requestSmsDefaultIfNeeded() }
-        }
+        // SMS butonu kaldırıldı - panel'den
+        findViewById<View>(R.id.tvSmsStatus)?.visibility = View.GONE
+        findViewById<View>(R.id.btnRequestSmsDefault)?.visibility = View.GONE
 
         findViewById<Button>(R.id.btnRefreshList)?.setOnClickListener {
             updateFirebaseInBackground()
@@ -383,13 +358,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            ROLE_REQUEST -> {
-                setupPanel()
-                requestSmsDefaultIfNeeded()
-            }
-            SMS_DEFAULT_REQUEST -> setupPanel()
-        }
+        if (requestCode == ROLE_REQUEST) setupPanel()
     }
 
     override fun onResume() {
