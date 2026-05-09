@@ -21,6 +21,7 @@ class CallScreeningServiceImpl : CallScreeningService() {
                     .setDisallowCall(true)
                     .setSkipCallLog(false)
                     .setSkipNotification(true)
+                    .setSilenceCall(true)
                     .build()
             }
             CallResult.SILENCE_BANK, CallResult.SILENCE_INTL, CallResult.SILENCE_UNKNOWN -> {
@@ -29,13 +30,14 @@ class CallScreeningServiceImpl : CallScreeningService() {
                     .setRejectCall(false)
                     .setDisallowCall(false)
                     .setSilenceCall(true)
-                    .setSkipNotification(false)
+                    .setSkipNotification(true)
                     .build()
             }
             CallResult.ALLOW -> {
                 CallResponse.Builder()
                     .setRejectCall(false)
                     .setDisallowCall(false)
+                    .setSilenceCall(false)
                     .build()
             }
         }
